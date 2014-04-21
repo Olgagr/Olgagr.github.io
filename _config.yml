@@ -1,0 +1,28 @@
+title: 						My Daily Coding
+description:      Describe your website here.
+markdown: 				redcarpet
+pygments: 				true
+
+url:              http://localhost:4000
+
+
+# Owner/author information
+owner:
+  name:           Olga Grabek
+  avatar:         ola.jpg
+  bio:            "Code, run, sleep, repeat"
+  email:          
+  # Social networking links used in footer. Update and remove as you like.
+  twitter:     		"ograbek"   
+  facebook:       
+  github:         olgagr
+  stackexchange:  
+  linkedin:       pub/olga-grabek/13/3a0/755
+  instagram:      
+  flickr:         
+  tumblr:         
+  # For Google Authorship https://plus.google.com/authorship
+  google_plus:  
+
+include: [".htaccess"]
+exclude: ["lib", "config.rb", "Capfile", "config", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules"]
