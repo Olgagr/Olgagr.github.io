@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Method’s arguments in Ruby"
-date:   2013-04-29 09:30:12
+date:   2013-04-23 09:30:12
 categories: ruby
 ---
 

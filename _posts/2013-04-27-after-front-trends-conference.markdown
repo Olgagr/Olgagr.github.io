@@ -8,7 +8,7 @@ categories: html css
 Last three days I spent at Front Trends conference in Warsaw. I must admit that it was the best event I took part into. I’m not a big fun of such events because I like to get practical knowledge, not  only ensures that JavaScript and HTML5 is the best what happened in the web. It’s also hard for me to sit down and listen lectures for too long, maybe as I finished my school education so far ago. Anyway, the event was great and surprised me positively.
 
 <figure>
-	<img src="images/front-trends/front-trends-1.jpg" alt="Front Trends poster">
+	<img src="/images/front-trends/front-trends-1.jpg" alt="Front Trends poster">
 </figure>
 
 ## Speakers
@@ -30,7 +30,7 @@ On the second stage, there were also additional speeches – light talks. I must
 To wrap up, there were some pros and cons of this conference but for me the most important is that I got actual knowledge and motivation to work harder. I think that web technologies will have great future because we have such wise and hard-working people on the board :)
 
 <figure>
-	<img src="images/front-trends/front-trends-2.jpg" alt="Front Trends free time">
+	<img src="/images/front-trends/front-trends-2.jpg" alt="Front Trends free time">
 	<figcaption>Resting with my teammate at Front Trends conference</figcaption>
 </figure>
 
