@@ -43,13 +43,13 @@ This caused that the block was invoked. So you can imagine the Proc object as a 
 So we already know that Proc is a class and we can create an instance of it. Block on the other hand is not an **object**. We can't create any instance of it and we are not able to send any message to it. Moreover, we can't send it as an argument to a method, since methods can only take objects as arguments. Wait a minute. So how is it possible that we can call such method ?
 
 {% highlight ruby %}
-['a','b','c'].each { |letter| letter.upcase }	 	
+['a','b','c'].map { |letter| letter.upcase }	 	
 {% endhighlight %}
 
 Interesting, isn't it ? Let's investigate how the signature of the method looks like.
 
 {% highlight ruby %}
-def each(&block)
+def map(&block)
 end	
 {% endhighlight %}
 
@@ -80,6 +80,62 @@ In this case we use *&* operator in method calling and it's job is quite differe
 
 * tells *simple* method that proc instance is serving as a block
 * calls *to_proc* method on *my_proc*. In case of Proc instance, this method just returns the instance itself.
+
+## &:upcase
+
+Let's return to our previoud example:
+
+{% highlight ruby %}
+['a','b','c'].map { |letter| letter.upcase }	 	
+{% endhighlight %}
+
+We can get the same effect if we write:
+
+{% highlight ruby %}
+['a','b','c'].map { |letter| letter.send(:upcase) }
+{% endhighlight %}
+
+or even more elegant:
+
+{% highlight ruby %}
+['a','b','c'].map(&:upcase)
+{% endhighlight %}
+
+We just know that *&* operator is a wrapper for *to_proc* method. In this case the *to_proc* message is send to symbol, in our case this is :upcase. So let's see how the implementation of *to_proc* method migth look like, keeping in mind that this method should return a Proc instance.
+
+{% highlight ruby %}
+class Symbol
+  def to_proc
+    Proc.new { |object| object.send(self) }	
+  end
+end	
+{% endhighlight %}
+
+So simple, isn't it? :)
+
+## yield
+
+Using *yield* statement is one another way to call a block. So we can create such method:
+
+{% highlight ruby %}
+def simple
+  yield
+end	 	
+{% endhighlight %}
+
+Then we can call it with any block:
+
+{% highlight ruby %}
+simple { puts "Let's keep it simple" }	
+{% endhighlight %}
+
+The rule here are the same. If we'd like to pass an Proc instance to the method, we have to remember about *&*, to tell method that we want to use Proc as a block.
+
+{% highlight ruby %}
+my_proc = proc { puts "Let's keep it simple" }
+simple &my_proc	
+{% endhighlight %}
+
 	
 
 	
