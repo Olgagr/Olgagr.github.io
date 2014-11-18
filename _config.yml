@@ -1,7 +1,7 @@
 title: 						code, run, sleep, repeat
 description:      Describe your website here.
 markdown: 				redcarpet
-pygments: 				true
+highlighter: 			pygments
 
 url:              http://olgagr.github.io
 
