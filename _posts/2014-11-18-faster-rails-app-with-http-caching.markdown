@@ -139,7 +139,7 @@ def call(env)
 end
 {% endhighlight %}
 
-In the line 6, it checks if the response status is 200 (so we have success). The second condition (fresh?(env, headers)) checks if the the pairs of headers Last-Modified/If-Modified-Since and ETag/If-None-Matchmatch each others. If so, (in the lines from 7 to 10), the status is set to 304, HTTP headers Content-Type and Content-Length are removed and the response body is cleared. As we can see this middleware is responsible for setting 304 status and clearing body, if the response content is still actual.
+In the line 6, it checks if the response status is 200 (so we have success). The second condition (fresh?(env, headers)) checks if the the pairs of headers Last-Modified/If-Modified-Since and ETag/If-None-Matchmatch each others. If so, (in the lines from 7 to 10), the status is set to 304, HTTP headers Content-Type and Content-Length are removed and the response body is cleared. As we can see this middleware is responsible for setting 304 status and clearing body, if the browser has actual content for the page.
 
 
 
