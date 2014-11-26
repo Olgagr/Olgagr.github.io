@@ -192,6 +192,15 @@ def show
 end
 {% endhighlight %}
 
+Now lest look closer how these methods work. Both of them take hash as an argument. 
+
+last_modified - the value of this key will be the value of Last-Modified header. So it must be a datetime.
+etag - not surprisingly value of this key is used by Rails to generate Etag header. As we can see, we can set an object here. It can be any object but it must respond to cache_key method. ActiveRecord objects have this method defined. 
+
+The params hash for these methods can also have public key set (by default it has false value). When it is set to true the reponses from our application can be cached by other devices (proxy caches). 
+
+The more concise form of these methods takes just object. If so, the object must response to cache_key and created_at methods.
+
 
 
 
