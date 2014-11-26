@@ -115,7 +115,7 @@ def call(env)
 end
 {% endhighlight %}
 
-In the line 6, digest from response body is created. If you look into digest_body method, you can see that Rack::Etag class uses md5 algorythm to generate it. Next, in the line 7 - this is the place where the header ETag is set. So this middleware sets up the ETag header for us.
+In the line 6, digest from response body is created. If you look into digest_body method, you can see that Rack::Etag class uses md5 algorythm to generate it. Next, in the line 7 - header ETag is set. So this middleware sets up the ETag header for us.
 
 Let's see what Rack::ConditionalGet buys us. You can find source code of this class in lib/rack/conditionalget.rb file:
 
@@ -141,6 +141,56 @@ end
 
 In the line 6, it checks if the response status is 200 (so we have success). The second condition (fresh?(env, headers)) checks if the the pairs of headers Last-Modified/If-Modified-Since and ETag/If-None-Matchmatch each others. If so, (in the lines from 7 to 10), the status is set to 304, HTTP headers Content-Type and Content-Length are removed and the response body is cleared. As we can see this middleware is responsible for setting 304 status and clearing body, if the browser has actual content for the page.
 
+So you can think right now: "Rails do all the hard work for me. So why to bother this topic, except that good to know how it works?". The thing is that we can go step futher and make it better. As I mention earlier, when we generate ETag/Last-Modified we can also reduce view rendering on the server side. Let's see how we can make it.
+
+## stale?/fresh_when methods
+
+In controller's class, Rails gives us two instance methods:
+
+* stale?
+* fresh_when
+
+Above methods allow us to easily generate Etag and Last-Modified headers on the application level. Let's see how we can use them.
+
+Varbose example of stale?
+
+{% highlight ruby linenos %}
+def show
+  @book = Book.find(params[:id])
+  if stale?(last_modified: @book.updated_at, etag: @book)
+    respond_to do |f|
+      #standard rendering
+    end
+  end
+end
+{% endhighlight %}
+
+We can also use shorter form of stale?
+
+{% highlight ruby linenos %}
+def show
+  @book = Book.find(params[:id])
+  respond_with(@book) if stale?(@book)
+end
+{% endhighlight %}
+
+fresh_when works in different way. Verbose example:
+
+{% highlight ruby linenos %}
+def show
+  @book = Book.find(params[:id])
+  fresh_when(last_modified: @book.updated_at, etag: @book)
+end
+{% endhighlight %}
+
+and concise example:
+
+{% highlight ruby linenos %}
+def show
+  @book = Book.find(params[:id])
+  fresh_when @book
+end
+{% endhighlight %}
 
 
 
