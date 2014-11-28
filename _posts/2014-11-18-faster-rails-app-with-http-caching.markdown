@@ -223,11 +223,81 @@ books/2-2014112812345
 
 * books - the name of the table for model
 * 2 - model id
-* 2014112812345 - timestamp
+* 2014112812345 - timestamp from updated_at attribute by default
 
 The params hash for these methods can also have public key set (by default it has false value). When it is set to true the reponses from our application can be cached by other devices (proxy caches). 
 
 The more concise form of these methods takes just object. If so, the object must response to cache_key and created_at methods.
+
+## What you should remember when you generate HTTP headers in the application?
+
+The rule of thumb is: always think about all elements on the page that are changing. If the UI depends of them - they should be taken into account when you generate ETag and Last-Modified headers.
+
+### Page contains a form
+
+When a page contains a form, you have to remember about authenticity_token that is send with request when an user submits the form. This token is changing so have to pass it to etag option when we generate ETag. In a controller, you can use form_authenticity_token method to retrieve 
+
+{% highlight ruby linenos %}
+def edit
+  @book = Book.find(params[:id])
+  fresh_when last_modified: @book.updated_at, 
+             etag: [ @book, form_authenticity_token ]
+end
+{% endhighlight %}
+
+### Pagination
+
+Another frequent situation is pagination on a page. Generating ETag we have to take into account two things:
+
+* the amount of elements in a collection
+* the updated_at attribute for elements in the collection. In fact, we don't have to worry about every single object in the collection. The most important for us is the last element that was updated.
+
+{% highlight ruby linenos %}
+def index
+  @book = Book.order(:title).page(params[:page])
+
+  count = Book.count
+  # remember to create index on update_at field
+  updated_at_max = Book.maximum(:updated_at).try(:utc).try(:to_s, :number)
+
+  fresh_when etag: "books/all-#{count}-#{updated_at_max}"
+end
+{% endhighlight %} 
+
+### Propagate updated_at to owning objects
+
+Sometimes the state of a page doesn't depend on object state directly. Les't assume that the show page of the book, contains user's comments. The comment model looks like this:
+
+{% highlight ruby linenos %}
+class Comment
+  belongs_to :book
+  belongs_to :user
+end
+{% endhighlight %}
+
+When we create ETag for show page in the standard way:
+
+{% highlight ruby linenos %}
+def show
+  @book = Book.find(params[:id])
+  fresh_when etag: @book
+end
+{% endhighlight %}
+
+it won't work properly. When a new comment will be created, the ETag will be still the same and the browser will get 304 status. We have to change Comment model:
+
+{% highlight ruby linenos %}
+class Comment
+  belongs_to :book, touch: true
+  belongs_to :user, touch: true
+end
+{% endhighlight %}
+
+The option touch causes that everytime a comment is created or updated, the updated_at attirbute on associated models is also updated. This way if a new comment is created, the updated_at attribute for book will change and the value of ETag and Last-Modified will also change.
+
+
+
+
 
 
 
