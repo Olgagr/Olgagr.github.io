@@ -215,7 +215,7 @@ We have quite wide range of options here:
 * we can set Array of objects or the object that responds to to_a message
 * finally, if nothig match (for example when the key is a string), the to_param method will be used
 
-If you are curious how the generated ETag value looks like, here is the example. For Book model cache key looks like this:
+If you are curious how the generated ETag value looks like, here is the example. For Book model cache key may look like this:
 
 {% highlight ruby linenos %}
 books/2-2014112812345
@@ -294,6 +294,35 @@ end
 {% endhighlight %}
 
 The option touch causes that everytime a comment is created or updated, the updated_at attirbute on associated models is also updated. This way if a new comment is created, the updated_at attribute for book will change and the value of ETag and Last-Modified will also change.
+
+### Values in session
+
+There are values that are not depenedent on updated_at attribute, but have an influence on our page. For example:
+
+* flash messages
+* current_user attributes
+* cookies
+
+Fortunately, Rails can help to solve this problem. In contoller class we can use class method etag, which allows us to define global values to compose ETag.
+
+{% highlight ruby linenos %}
+class ApplicationController < ActionController::Base
+  etag { flash }
+  etag { current_user.try(:email) }
+end
+{% endhighlight %} 
+
+When you have many data in session and it will be hard to chose what takes to ETag, you can take the whole session:
+
+{% highlight ruby linenos %}
+class ApplicationController < ActionController::Base
+  etag { Hash[session] }
+end
+{% endhighlight %}
+
+### HTML or CSS changes
+
+Whet you do in situation when nothing changed in your model, but HTML or CSS changed. Of course, you want the visitors to see the newest version of the page. How can you tell Rails to invalidate ETag header ? By default, when Rails generates ETag value it can add additional prefix to it. This prefix is a value of RAILS_CACHE_ID or RAILS_APP_VERSION environment variables. So everytime you want to invalidate etags, you can just change the values of this variables. 
 
 
 
