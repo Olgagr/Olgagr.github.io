@@ -339,7 +339,9 @@ def show
 end
 {% endhighlight %}
 
+## Summary
 
+Rails helps us a lot to manage HTTP headers. It's definitely worth to use HTTP headers, even if you only depend on default behaviour of rack meddlewares. 
 
 
 
