@@ -195,11 +195,45 @@ end
 Now lest look closer how these methods work. Both of them take hash as an argument. 
 
 last_modified - the value of this key will be the value of Last-Modified header. So it must be a datetime.
-etag - not surprisingly value of this key is used by Rails to generate Etag header. As we can see, we can set an object here. It can be any object but it must respond to cache_key method. ActiveRecord objects have this method defined. 
+etag - not surprisingly value of this key is used by Rails to generate Etag header. Let's look into source code to check what values is can take:
+
+{% highlight ruby linenos %}
+# gem activesupport - lib/activesupport/cache.rb
+def retrieve_cache_key(key)
+  case
+  when key.respond_to?(:cache_key) then key.cache_key
+  when key.is_a?(Array)            then key.map { |element| retrieve_cache_key(element) }.to_param
+  when key.respond_to?(:to_a)      then retrieve_cache_key(key.to_a)
+  else                                  key.to_param
+  end.to_s
+end
+{% endhighlight %}
+
+We have quite wide range of options here:
+
+* we can set an object here, that responds to cache_key message. All ActiveRecord objects have this method defined by default.
+* we can set Array of objects or the object that responds to to_a message
+* finally, if nothig match (for example when the key is a string), the to_param method will be used
+
+If you are curious how the generated ETag value looks like, here is the example. For Book model cache key looks like this:
+
+{% highlight ruby linenos %}
+books/2-2014112812345
+{% endhighlight %}
+
+* books - the name of the table for model
+* 2 - model id
+* 2014112812345 - timestamp
 
 The params hash for these methods can also have public key set (by default it has false value). When it is set to true the reponses from our application can be cached by other devices (proxy caches). 
 
 The more concise form of these methods takes just object. If so, the object must response to cache_key and created_at methods.
+
+
+
+
+
+
 
 
 
