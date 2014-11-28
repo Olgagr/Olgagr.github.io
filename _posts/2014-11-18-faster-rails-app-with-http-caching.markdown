@@ -269,7 +269,7 @@ end
 Sometimes the state of a page doesn't depend on object state directly. Les't assume that the show page of the book, contains user's comments. The comment model looks like this:
 
 {% highlight ruby linenos %}
-class Comment
+class Comment < ActiveRecord::Base
   belongs_to :book
   belongs_to :user
 end
@@ -287,7 +287,7 @@ end
 it won't work properly. When a new comment will be created, the ETag will be still the same and the browser will get 304 status. We have to change Comment model:
 
 {% highlight ruby linenos %}
-class Comment
+class Comment < ActiveRecord::Base
   belongs_to :book, touch: true
   belongs_to :user, touch: true
 end
