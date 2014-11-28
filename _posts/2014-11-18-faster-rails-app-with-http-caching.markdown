@@ -68,6 +68,10 @@ Cache-Control is the header which is sends in the response by the server. It con
 	<img src="/images/http-caching/cache-control.png" alt="the example of Cache-Control HTTP header">
 </figure> 
 
+This header has big advantage compares to other ones. Here browser has knowledge how long the page is actual, so the browser doesn't have to request the server. The browser can take the page from cache immediately, so this is super fast!
+
+The cons is that in many situation is hard to estimate the time how long the page should be valid.
+
 Ok, so now we know how these HTTP headers work. Let's see how Rails helps us to use them more easily.
 
 ## Rails, as usual, does a lot by default!
@@ -323,6 +327,18 @@ end
 ### HTML or CSS changes
 
 Whet you do in situation when nothing changed in your model, but HTML or CSS changed. Of course, you want the visitors to see the newest version of the page. How can you tell Rails to invalidate ETag header ? By default, when Rails generates ETag value it can add additional prefix to it. This prefix is a value of RAILS_CACHE_ID or RAILS_APP_VERSION environment variables. So everytime you want to invalidate etags, you can just change the values of this variables. 
+
+## expires_in
+
+Finally, let's see how we can set Cache-Control:max-age. We have a special method in controller to our disposal - expires_in:
+
+{% highlight ruby linenos %}
+def show
+  @book = Book.find(params[:id])
+  expires_in 10.minutes  
+end
+{% endhighlight %}
+
 
 
 
